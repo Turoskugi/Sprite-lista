@@ -279,21 +279,7 @@
       if (res && res.value) data = JSON.parse(res.value);
     } catch (e) { /* no data yet */ }
   }
-  async function saveData() {
-    try { await window.storage.set(DATA_KEY, JSON.stringify(data), true); }
-    catch (e) { console.error('Mentési hiba', e); alert('Nem sikerült menteni, próbáld újra.'); }
-  }
-  async function loadMe() {
-    try {
-      const res = await window.storage.get(ME_KEY, false);
-      if (res && res.value) me = res.value;
-    } catch (e) { /* not set yet */ }
-  }
-  async function saveMe(name) {
-    me = name;
-    try { await window.storage.set(ME_KEY, name, false); } catch (e) { console.error(e); }
-  }
-
+ 
   function pct(user) {
     if (!data.items.length) return 0;
     let have = 0;
