@@ -1,0 +1,530 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+#ft-app * { box-sizing: border-box; }
+#ft-app {
+  --bg: #0a0b12;
+  --panel: #12131e;
+  --panel-2: #1a1c2a;
+  --panel-3: #20223354;
+  --border: #2a2c40;
+  --purple: #8b3ffb;
+  --purple-dim: #8b3ffb33;
+  --cyan: #00e0ff;
+  --text: #eceef7;
+  --text-dim: #8083a1;
+  --common: #9aa0ad;
+  --uncommon: #4fce65;
+  --rare: #3d9bf0;
+  --epic: #b24ef2;
+  --legendary: #f0952f;
+  --mythic: #f2d675;
+
+  background: radial-gradient(1200px 700px at 15% -10%, #1c1440 0%, transparent 55%),
+              radial-gradient(1000px 600px at 100% 0%, #072430 0%, transparent 50%),
+              var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  padding: 28px 20px 60px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+#ft-app .storm-ring {
+  position: absolute; top: -220px; right: -220px;
+  width: 500px; height: 500px; border-radius: 50%;
+  border: 1px solid #8b3ffb22;
+  pointer-events: none;
+}
+#ft-app .storm-ring::before {
+  content: ''; position: absolute; inset: 60px; border-radius: 50%;
+  border: 1px solid #00e0ff1a;
+}
+
+#ft-app .wrap { max-width: 1080px; margin: 0 auto; position: relative; }
+
+#ft-app .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 3px; color: var(--cyan);
+  text-transform: uppercase; margin: 0 0 6px;
+}
+#ft-app h1 {
+  font-family: 'Rajdhani', sans-serif; font-weight: 700;
+  font-size: 44px; letter-spacing: 1px; margin: 0;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #fff 0%, #cdb8ff 60%, var(--cyan) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+#ft-app .sub { color: var(--text-dim); margin: 6px 0 28px; font-size: 14px; max-width: 560px; }
+
+#ft-app .bar {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  margin-bottom: 22px; padding: 14px 16px; background: var(--panel);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+#ft-app .chip {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  padding: 7px 12px; border-radius: 7px; background: var(--panel-2);
+  border: 1px solid var(--border); color: var(--text-dim);
+}
+#ft-app .chip b { color: var(--text); }
+#ft-app .spacer { flex: 1; }
+
+#ft-app button {
+  font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: .5px;
+  text-transform: uppercase; font-size: 13px; cursor: pointer;
+  border-radius: 7px; padding: 9px 16px; border: 1px solid var(--border);
+  background: var(--panel-2); color: var(--text); transition: all .15s ease;
+}
+#ft-app button:hover { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple-dim); }
+#ft-app button.primary { background: linear-gradient(90deg, var(--purple), #6a2fe0); border: none; color: #fff; }
+#ft-app button.ghost-admin { color: var(--legendary); border-color: #f0952f55; }
+#ft-app button.ghost-admin.on { background: #f0952f22; }
+#ft-app button:disabled { opacity: .35; cursor: not-allowed; }
+
+#ft-app .table-scroll {
+  overflow: auto; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--panel); max-height: 62vh;
+}
+#ft-app table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 480px; }
+#ft-app thead th {
+  position: sticky; top: 0; background: #171827; z-index: 2;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 13px;
+  letter-spacing: .5px; text-transform: uppercase; color: var(--text-dim);
+  padding: 12px 14px; border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+#ft-app thead th.item-col { position: sticky; left: 0; z-index: 3; background: #171827; text-align: left; min-width: 220px; }
+#ft-app thead th .user-progress { display: block; font-size: 10px; color: var(--cyan); margin-top: 3px; font-family:'JetBrains Mono',monospace; }
+#ft-app thead th.me { color: var(--cyan); }
+#ft-app tbody td { padding: 10px 14px; border-bottom: 1px solid #ffffff08; text-align: center; }
+#ft-app tbody tr:hover td { background: #ffffff05; }
+#ft-app tbody td.item-col {
+  position: sticky; left: 0; background: var(--panel); text-align: left;
+  border-left: 3px solid var(--common);
+  font-weight: 500; z-index: 1;
+}
+#ft-app tbody tr:hover td.item-col { background: #191b29; }
+#ft-app .rarity-common { border-left-color: var(--common) !important; }
+#ft-app .rarity-uncommon { border-left-color: var(--uncommon) !important; }
+#ft-app .rarity-rare { border-left-color: var(--rare) !important; }
+#ft-app .rarity-epic { border-left-color: var(--epic) !important; }
+#ft-app .rarity-legendary { border-left-color: var(--legendary) !important; }
+#ft-app .rarity-mythic { border-left-color: var(--mythic) !important; }
+
+#ft-app .item-name { display: flex; align-items: center; gap: 8px; }
+#ft-app .rarity-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+#ft-app .icon-chip {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--border); color: var(--text);
+}
+#ft-app .icon-chip.img { overflow: hidden; padding: 0; }
+#ft-app .icon-chip.img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#ft-app .img-btn {
+  border: none; background: transparent; color: var(--text-dim); font-size: 13px;
+  padding: 0 3px; opacity: .55; margin-left: 4px; text-decoration: none; display: inline-block;
+}
+#ft-app .img-btn:hover { opacity: 1; color: var(--cyan); box-shadow: none; }
+#ft-app .del-btn {
+  border: none; background: transparent; color: var(--text-dim); font-size: 15px;
+  padding: 0 4px; margin-left: auto; opacity: .5;
+}
+#ft-app .del-btn:hover { opacity: 1; color: #ff5c7a; box-shadow: none; }
+
+#ft-app .toggle {
+  width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--panel-2); cursor: pointer; display: inline-flex;
+  align-items: center; justify-content: center; padding: 0; color: transparent;
+}
+#ft-app .toggle.on { background: linear-gradient(135deg, var(--cyan), var(--purple)); border-color: transparent; color: #0a0b12; font-weight: 700; }
+#ft-app .toggle.locked { cursor: not-allowed; opacity: .45; }
+#ft-app .toggle:not(.locked):hover { border-color: var(--cyan); }
+
+#ft-app .empty { padding: 40px 20px; text-align: center; color: var(--text-dim); font-size: 14px; }
+
+#ft-app .overlay {
+  position: fixed; inset: 0; background: #05060bcc; backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px;
+}
+#ft-app .modal {
+  background: var(--panel-2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 26px; width: 100%; max-width: 360px;
+}
+#ft-app .modal h3 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; margin: 0 0 4px; font-size: 20px; letter-spacing: .5px; }
+#ft-app .modal p.hint { color: var(--text-dim); font-size: 12.5px; margin: 0 0 16px; }
+#ft-app .modal input, #ft-app .modal select {
+  width: 100%; padding: 10px 12px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--text); font-size: 14px; margin-bottom: 10px; font-family: 'Inter', sans-serif;
+}
+#ft-app .modal .row { display: flex; gap: 8px; margin-top: 14px; }
+#ft-app .modal .row button { flex: 1; }
+#ft-app .err { color: #ff5c7a; font-size: 12px; margin: -4px 0 10px; min-height: 14px; }
+#ft-app .footnote { text-align:center; color: var(--text-dim); font-size: 11.5px; margin-top: 18px; font-family: 'JetBrains Mono', monospace; }
+</style>
+
+<div id="ft-app">
+  <div class="storm-ring"></div>
+  <div class="wrap">
+    <div class="eyebrow">SQUAD LOOT LEDGER</div>
+    <h1>Sprite Vault</h1>
+    <p class="sub">A lista alapból tartalmazza mind a 18 hivatalos Sprite-ot az összes variánsával (85 tétel). Jelöld, mi van meg neked — mindenki a saját oszlopát pipálja, a többit csak nézi.</p>
+
+    <div class="bar" id="ft-toolbar"></div>
+    <div class="table-scroll"><table id="ft-table"></table></div>
+    <div class="footnote" id="ft-footnote"></div>
+  </div>
+</div>
+
+<div id="ft-modal-root"></div>
+
+<script>
+(function(){
+  const DATA_KEY = 'sprite-tracker-data';
+  const ME_KEY = 'sprite-tracker-me';
+  const ADMIN_PASSWORD = 'STORM2026'; // change this if you want a different admin passcode
+  const RARITIES = ['common','uncommon','rare','epic','legendary','mythic'];
+  const RARITY_LABEL = { common:'Common', uncommon:'Uncommon', rare:'Rare', epic:'Epic', legendary:'Legendary', mythic:'Mythic' };
+
+  let data = { items: [], users: [], marks: {} };
+  let me = null;
+  let isAdmin = false;
+  let loaded = false;
+
+  const toolbar = document.getElementById('ft-toolbar');
+  const tableEl = document.getElementById('ft-table');
+  const footnote = document.getElementById('ft-footnote');
+  const modalRoot = document.getElementById('ft-modal-root');
+
+  // Official Sprite catalog (Chapter 7 Season 3) — name, rarity tier, and which variants exist for each.
+  const SPRITE_CATALOG = [
+    { id: 'water', name: 'Water', rarity: 'rare', variants: ['Normal','Gold','Gummy','Galaxy','Gem','Holofoil'] },
+    { id: 'earth', name: 'Earth', rarity: 'rare', variants: ['Normal','Gold','Gummy','Galaxy','Gem'] },
+    { id: 'fire', name: 'Fire', rarity: 'rare', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'fishy', name: 'Fishy', rarity: 'rare', variants: ['Normal','Gold','Gummy','Galaxy'] },
+    { id: 'duck', name: 'Duck', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Gem','Holofoil'] },
+    { id: 'ghost', name: 'Ghost', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'demon', name: 'Demon', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Gem'] },
+    { id: 'king', name: 'King', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'aura', name: 'Aura', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Gem'] },
+    { id: 'striker', name: 'Striker', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'air', name: 'Air', rarity: 'epic', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'dream', name: 'Dream', rarity: 'legendary', variants: ['Normal','Gold','Gummy','Galaxy'] },
+    { id: 'punk', name: 'Punk', rarity: 'legendary', variants: ['Normal','Gold','Gummy','Galaxy','Gem'] },
+    { id: 'boss', name: 'Boss', rarity: 'legendary', variants: ['Normal','Gold','Gummy','Galaxy'] },
+    { id: 'grim', name: 'Grim Reaper', rarity: 'legendary', variants: ['Normal','Gold','Gummy','Galaxy'] },
+    { id: 'seven', name: 'Seven', rarity: 'legendary', variants: ['Normal','Gold','Gummy','Galaxy','Holofoil'] },
+    { id: 'zeropoint', name: 'Zero Point', rarity: 'mythic', variants: ['Normal','Gold','Gummy','Galaxy','Gem','Quack'] },
+    { id: 'burntpeanut', name: 'Burnt Peanut', rarity: 'mythic', variants: ['Normal'] }
+  ];
+
+  // Original, generic glyphs (not game artwork) representing each sprite element — used as small in-app icons.
+  const ICONS = {
+    water: '<path d="M12 2c-3.5 5-7 9-7 13a7 7 0 0014 0c0-4-3.5-8-7-13z"/>',
+    earth: '<path d="M2 19l5-9 3 4 2-3 6 8z"/><path d="M14 19l3-6 5 6z"/>',
+    fire: '<path d="M12 2c1.2 3.4-2 4.6-2 8a2.2 2.2 0 004.4 0c0-1.6-.8-2.4-.8-3.4 1.8 1.8 3.2 4 3.2 6.6a5 5 0 01-10 0C6.8 8.8 10.4 6 12 2z"/>',
+    fishy: '<ellipse cx="10" cy="12" rx="7" ry="4.2"/><path d="M17 12l4-3.2v6.4z"/><circle cx="7" cy="11" r="0.8" fill="currentColor" stroke="none"/>',
+    duck: '<circle cx="10" cy="14" r="5.5"/><circle cx="15.5" cy="9" r="3"/><path d="M18.3 8.7h2.4l-2 1.6z" fill="currentColor" stroke="none"/>',
+    ghost: '<path d="M6 20V11a6 6 0 0112 0v9l-2-1.6L14 20l-2-1.6L10 20l-2-1.6z"/><circle cx="9.3" cy="11" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.7" cy="11" r="0.9" fill="currentColor" stroke="none"/>',
+    demon: '<path d="M12 5l2.4 2.8 3.6-2-.8 3.8a5.2 5.2 0 11-10.4 0l-.8-3.8 3.6 2z"/>',
+    king: '<path d="M3 18h18l-1.6-8-4 3.6-3-6-3 6-4-3.6z"/>',
+    aura: '<path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/>',
+    striker: '<circle cx="12" cy="12" r="9"/><path d="M12 4v6M4.5 9l7.5 3M19.5 9l-7.5 3M7 20l5-8M17 20l-5-8"/>',
+    air: '<path d="M3 8h11.5a2.8 2.8 0 10-2.6-4M3 12.5h15a3 3 0 11-2.8 4.3M3 17h9.5"/>',
+    dream: '<path d="M7.5 18a4.2 4.2 0 01-.6-8.3 5.2 5.2 0 019.9-1.9 4.2 4.2 0 01-.6 8.3z"/>',
+    punk: '<path d="M6 20l-1-8 2.6 3 1-6 2 4.6 2-4.6 1 6 2.6-3-1 8z"/>',
+    boss: '<path d="M12 2l8 3.2v5.6c0 5.4-3.5 8.9-8 11.2-4.5-2.3-8-5.8-8-11.2V5.2z"/><path d="M12 7.5l1.5 3.4h3.6l-2.9 2.2 1.1 3.5-3.3-2.1-3.3 2.1 1.1-3.5-2.9-2.2h3.6z" fill="currentColor" stroke="none"/>',
+    grim: '<path d="M12 3a5 5 0 00-5 5v3l-2.2 8h14.4L17 11V8a5 5 0 00-5-5z"/><circle cx="9.6" cy="10" r="0.9" fill="currentColor" stroke="none"/><circle cx="14.4" cy="10" r="0.9" fill="currentColor" stroke="none"/>',
+    seven: '<text x="6.2" y="18" font-size="15" font-family="Rajdhani, sans-serif" font-weight="700" fill="currentColor" stroke="none">7</text>',
+    zeropoint: '<circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/>',
+    burntpeanut: '<ellipse cx="9" cy="9.5" rx="4.2" ry="3.3" transform="rotate(-32 9 9.5)"/><ellipse cx="15" cy="15" rx="4.2" ry="3.3" transform="rotate(-32 15 15)"/>',
+    custom: '<path d="M3 12l8-8h9v9l-8 8-9-9z"/><circle cx="15" cy="9" r="1.3" fill="currentColor" stroke="none"/>'
+  };
+  const VARIANT_COLORS = { Normal: '#454868', Gold: '#ffd700', Gummy: '#ff6fae', Galaxy: '#8b3ffb', Gem: '#00e5ff', Holofoil: '#f2d675', Quack: '#ffb020', Custom: '#454868' };
+  const RARITY_TINT = { common: '#9aa0ad', uncommon: '#4fce65', rare: '#3d9bf0', epic: '#b24ef2', legendary: '#f0952f', mythic: '#f2d675' };
+
+  function buildDefaultItems() {
+    const items = [];
+    SPRITE_CATALOG.forEach(sp => {
+      sp.variants.forEach(v => {
+        items.push({
+          id: 'sp_' + sp.id + '_' + v.toLowerCase(),
+          name: sp.name + ' · ' + v,
+          rarity: sp.rarity,
+          icon: sp.id,
+          variant: v
+        });
+      });
+    });
+    return items;
+  }
+
+  function iconSvg(item) {
+    const ring = VARIANT_COLORS[item.variant] || VARIANT_COLORS.Custom;
+    const tint = RARITY_TINT[item.rarity] || RARITY_TINT.common;
+    if (item.image) {
+      return '<span class="icon-chip img" style="border-color:' + ring + '"><img src="' + item.image + '" alt="" /></span>';
+    }
+    const glyph = ICONS[item.icon] || ICONS.custom;
+    return '<span class="icon-chip" style="border-color:' + ring + ';background:linear-gradient(135deg,' + tint + '33,' + tint + '11)">' +
+      '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + glyph + '</svg>' +
+      '</span>';
+  }
+
+  function markKey(itemId, user) { return itemId + '|' + user; }
+
+  async function loadData() {
+    try {
+      const res = await window.storage.get(DATA_KEY, true);
+      if (res && res.value) data = JSON.parse(res.value);
+    } catch (e) { /* no data yet */ }
+  }
+  async function saveData() {
+    try { await window.storage.set(DATA_KEY, JSON.stringify(data), true); }
+    catch (e) { console.error('Mentési hiba', e); alert('Nem sikerült menteni, próbáld újra.'); }
+  }
+  async function loadMe() {
+    try {
+      const res = await window.storage.get(ME_KEY, false);
+      if (res && res.value) me = res.value;
+    } catch (e) { /* not set yet */ }
+  }
+  async function saveMe(name) {
+    me = name;
+    try { await window.storage.set(ME_KEY, name, false); } catch (e) { console.error(e); }
+  }
+
+  function pct(user) {
+    if (!data.items.length) return 0;
+    let have = 0;
+    data.items.forEach(it => { if (data.marks[markKey(it.id, user)]) have++; });
+    return Math.round((have / data.items.length) * 100);
+  }
+
+  function openModal(html, onMount) {
+    modalRoot.innerHTML = '<div class="overlay" id="ft-overlay"><div class="modal">' + html + '</div></div>';
+    if (onMount) onMount();
+    document.getElementById('ft-overlay').addEventListener('mousedown', (e) => {
+      if (e.target.id === 'ft-overlay') closeModal();
+    });
+  }
+  function closeModal() { modalRoot.innerHTML = ''; }
+
+  function askName() {
+    openModal(
+      '<h3>Ki vagy te?</h3><p class="hint">Add meg a neved — ez lesz a saját oszlopod a listában.</p>' +
+      '<input id="ft-name-input" placeholder="Pl. Kevin" maxlength="20" autofocus />' +
+      '<div class="err" id="ft-name-err"></div>' +
+      '<div class="row"><button class="primary" id="ft-name-ok">Belépés</button></div>',
+      () => {
+        const input = document.getElementById('ft-name-input');
+        const submit = async () => {
+          const val = input.value.trim();
+          if (!val) { document.getElementById('ft-name-err').textContent = 'Írj be egy nevet.'; return; }
+          await saveMe(val);
+          if (!data.users.includes(val)) { data.users.push(val); await saveData(); }
+          closeModal();
+          render();
+        };
+        document.getElementById('ft-name-ok').onclick = submit;
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+        input.focus();
+      }
+    );
+  }
+
+  function askAdmin() {
+    if (isAdmin) { isAdmin = false; render(); return; }
+    openModal(
+      '<h3>Admin belépés</h3><p class="hint">Jelszóval bárki oszlopát tudod majd szerkeszteni.</p>' +
+      '<input id="ft-pw-input" type="password" placeholder="Jelszó" autofocus />' +
+      '<div class="err" id="ft-pw-err"></div>' +
+      '<div class="row"><button id="ft-pw-cancel">Mégse</button><button class="primary" id="ft-pw-ok">Belépés</button></div>',
+      () => {
+        const input = document.getElementById('ft-pw-input');
+        const submit = () => {
+          if (input.value === ADMIN_PASSWORD) { isAdmin = true; closeModal(); render(); }
+          else document.getElementById('ft-pw-err').textContent = 'Hibás jelszó.';
+        };
+        document.getElementById('ft-pw-ok').onclick = submit;
+        document.getElementById('ft-pw-cancel').onclick = closeModal;
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+        input.focus();
+      }
+    );
+  }
+
+  function askAddItem() {
+    const options = RARITIES.map(r => '<option value="' + r + '">' + RARITY_LABEL[r] + '</option>').join('');
+    openModal(
+      '<h3>Extra sprite</h3><p class="hint">A hivatalos lista már benne van — ezzel bármi mást hozzáadhatsz (pl. jövőbeli vagy egyedi tétel).</p>' +
+      '<input id="ft-item-input" placeholder="Pl. Skull Trooper" maxlength="40" autofocus />' +
+      '<select id="ft-item-rarity">' + options + '</select>' +
+      '<div class="err" id="ft-item-err"></div>' +
+      '<div class="row"><button id="ft-item-cancel">Mégse</button><button class="primary" id="ft-item-ok">Hozzáadás</button></div>',
+      () => {
+        const input = document.getElementById('ft-item-input');
+        const submit = async () => {
+          const val = input.value.trim();
+          if (!val) { document.getElementById('ft-item-err').textContent = 'Írj be egy nevet.'; return; }
+          const rarity = document.getElementById('ft-item-rarity').value;
+          data.items.push({ id: 'it_' + Date.now() + '_' + Math.floor(Math.random()*1000), name: val, rarity, icon: 'custom', variant: 'Custom' });
+          await saveData();
+          closeModal();
+          render();
+        };
+        document.getElementById('ft-item-ok').onclick = submit;
+        document.getElementById('ft-item-cancel').onclick = closeModal;
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+        input.focus();
+      }
+    );
+  }
+
+  async function toggleMark(itemId, user) {
+    if (user !== me && !isAdmin) return;
+    const k = markKey(itemId, user);
+    data.marks[k] = !data.marks[k];
+    render();
+    await saveData();
+  }
+
+  async function deleteItem(itemId) {
+    if (!isAdmin) return;
+    data.items = data.items.filter(i => i.id !== itemId);
+    Object.keys(data.marks).forEach(k => { if (k.startsWith(itemId + '|')) delete data.marks[k]; });
+    await saveData();
+    render();
+  }
+
+  function pickImageFor(itemId) {
+    if (!isAdmin) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = async () => {
+          const size = 96;
+          const canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const scale = Math.max(size / img.width, size / img.height);
+          const w = img.width * scale, h = img.height * scale;
+          ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          const it = data.items.find(i => i.id === itemId);
+          if (it) { it.image = dataUrl; await saveData(); render(); }
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  }
+
+  async function clearImageFor(itemId) {
+    if (!isAdmin) return;
+    const it = data.items.find(i => i.id === itemId);
+    if (it && it.image) { delete it.image; await saveData(); render(); }
+  }
+
+  function refLink(item) {
+    const q = encodeURIComponent('Fortnite Sprite ' + item.name.replace(' · ', ' '));
+    return 'https://www.google.com/search?tbm=isch&q=' + q;
+  }
+
+  function renderToolbar() {
+    const total = data.items.length;
+    const mine = me ? pct(me) : 0;
+    toolbar.innerHTML =
+      '<span class="chip">Belépve: <b>' + (me || '—') + '</b></span>' +
+      '<span class="chip">Saját haladás: <b>' + mine + '%</b></span>' +
+      '<span class="chip">Sprite-ok: <b>' + total + '</b></span>' +
+      '<span class="chip">Játékosok: <b>' + data.users.length + '</b></span>' +
+      '<div class="spacer"></div>' +
+      '<button id="ft-add-item-btn">+ Extra sprite</button>' +
+      '<button id="ft-admin-btn" class="ghost-admin' + (isAdmin ? ' on' : '') + '">' + (isAdmin ? 'Admin mód: BE' : 'Admin belépés') + '</button>';
+    document.getElementById('ft-add-item-btn').onclick = askAddItem;
+    document.getElementById('ft-admin-btn').onclick = askAdmin;
+  }
+
+  function renderTable() {
+    if (!data.users.length) {
+      tableEl.innerHTML = '';
+      footnote.textContent = '';
+      return;
+    }
+    if (!data.items.length) {
+      tableEl.innerHTML = '<tr><td class="empty">Még nincs egy sprite sem a listában. Adj hozzá egyet a gombbal fent!</td></tr>';
+      return;
+    }
+    let thead = '<thead><tr><th class="item-col">Sprite</th>';
+    data.users.forEach(u => {
+      thead += '<th class="' + (u === me ? 'me' : '') + '">' + escapeHtml(u) + '<span class="user-progress">' + pct(u) + '%</span></th>';
+    });
+    thead += '</tr></thead>';
+
+    let tbody = '<tbody>';
+    data.items.forEach(it => {
+      tbody += '<tr><td class="item-col rarity-' + it.rarity + '"><div class="item-name">' +
+        iconSvg(it) +
+        '<span>' + escapeHtml(it.name) + '</span>' +
+        '<a class="img-btn" href="' + refLink(it) + '" target="_blank" rel="noopener" title="Hivatalos kép megtekintése új fülön">🔍</a>' +
+        (isAdmin ? '<button class="img-btn" data-img="' + it.id + '" title="Kép feltöltése">📷</button>' : '') +
+        (isAdmin && it.image ? '<button class="img-btn" data-imgclear="' + it.id + '" title="Kép törlése">✕🖼</button>' : '') +
+        (isAdmin ? '<button class="del-btn" data-del="' + it.id + '" title="Törlés">✕</button>' : '') +
+        '</div></td>';
+      data.users.forEach(u => {
+        const on = !!data.marks[markKey(it.id, u)];
+        const editable = (u === me || isAdmin);
+        tbody += '<td><button class="toggle ' + (on ? 'on' : '') + (editable ? '' : ' locked') + '" data-item="' + it.id + '" data-user="' + escapeAttr(u) + '">' + (on ? '✓' : '') + '</button></td>';
+      });
+      tbody += '</tr>';
+    });
+    tbody += '</tbody>';
+
+    tableEl.innerHTML = thead + tbody;
+
+    tableEl.querySelectorAll('.toggle').forEach(btn => {
+      btn.addEventListener('click', () => toggleMark(btn.getAttribute('data-item'), btn.getAttribute('data-user')));
+    });
+    tableEl.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', () => deleteItem(btn.getAttribute('data-del')));
+    });
+    tableEl.querySelectorAll('[data-img]').forEach(btn => {
+      btn.addEventListener('click', () => pickImageFor(btn.getAttribute('data-img')));
+    });
+    tableEl.querySelectorAll('[data-imgclear]').forEach(btn => {
+      btn.addEventListener('click', () => clearImageFor(btn.getAttribute('data-imgclear')));
+    });
+
+    footnote.textContent = isAdmin ? 'Admin mód aktív — bármelyik oszlopot szerkesztheted, képet tölthetsz fel (📷) vagy törölhetsz sprite-ot.' : 'Csak a saját (' + me + ') oszlopodat tudod jelölni.';
+  }
+
+  function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function escapeAttr(s) { return escapeHtml(s); }
+
+  function render() {
+    if (!loaded) return;
+    renderToolbar();
+    renderTable();
+  }
+
+  async function init() {
+    tableEl.innerHTML = '<tr><td class="empty">Betöltés…</td></tr>';
+    await Promise.all([loadData(), loadMe()]);
+    if (!data.items.length) { data.items = buildDefaultItems(); await saveData(); }
+    loaded = true;
+    if (!me) { askName(); }
+    else if (!data.users.includes(me)) { data.users.push(me); await saveData(); }
+    render();
+  }
+
+  init();
+})();
+</script>
