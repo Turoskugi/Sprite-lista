@@ -1,6 +1,72 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+// storage wrapper és javított load/save függvények
+const StorageShim = (function(){
+  const host = (window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function') ? window.storage : null;
+  return {
+    async get(key, asString = false) {
+      if (host) return host.get(key, asString);
+      const v = localStorage.getItem(key);
+      return v === null ? null : { value: v };
+    },
+    async set(key, value, asString = false) {
+      if (host) return host.set(key, value, asString);
+      // value expected to be string (your code already JSON.stringify before setData)
+      try {
+        localStorage.setItem(key, value);
+        return true;
+      } catch (e) {
+        // rethrow so caller can handle (QuotaExceededError etc.)
+        throw e;
+      }
+    }
+  };
+})();
 
+// Használd a StorageShim-et a load/save függvényeknél:
+async function loadData() {
+  try {
+    const res = await StorageShim.get(DATA_KEY, true);
+    if (res && res.value) data = JSON.parse(res.value);
+  } catch (e) { console.error('loadData hiba', e); /* no data yet */ }
+}
+async function saveData() {
+  try {
+    await StorageShim.set(DATA_KEY, JSON.stringify(data), true);
+  } catch (e) {
+    console.error('Mentési hiba', e);
+    // Ha kvóta probléma, próbáljuk meg képek nélkül menteni (gyors workaround)
+    if (e.name && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22)) {
+      const backupImages = {};
+      try {
+        // kiszedjük az image mezőket ideiglenesen
+        data.items.forEach((it, i) => { if (it.image) { backupImages[it.id] = it.image; delete it.image; }});
+        await StorageShim.set(DATA_KEY, JSON.stringify(data), true);
+        // visszaállítjuk a képeket a memória változatban, de nem mentjük újra automatikusan
+        Object.keys(backupImages).forEach(id => {
+          const it = data.items.find(x => x.id === id);
+          if (it) it.image = backupImages[id];
+        });
+        alert('Mentés sikerült, de a képeket nem tudtuk menteni a tárolókvóta miatt. Képek helyben maradtak (nem tárolódnak).');
+      } catch (e2) {
+        console.error('Mentés kvóta után is hibás', e2);
+        alert('Nem sikerült menteni — a tároló megtelt vagy nem támogatott. Próbáld meg a böngésződ konzoljában ellenőrizni a részletes hibát.');
+      }
+    } else {
+      alert('Nem sikerült menteni, próbáld újra.');
+    }
+  }
+}
+async function loadMe() {
+  try {
+    const res = await StorageShim.get(ME_KEY, false);
+    if (res && res.value) me = res.value;
+  } catch (e) { console.error('loadMe hiba', e); }
+}
+async function saveMe(name) {
+  me = name;
+  try { await StorageShim.set(ME_KEY, name, false); } catch (e) { console.error('saveMe hiba', e); }
+}
 #ft-app * { box-sizing: border-box; }
 #ft-app {
   --bg: #0a0b12;
